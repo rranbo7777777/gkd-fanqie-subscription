@@ -1,0 +1,369 @@
+// ============================================================
+// 番茄免费小说 去广告订阅 (GKD)
+// ------------------------------------------------------------
+// 目标应用: 番茄免费小说 (包名 com.dragon.read)
+// 规则来源: 开源社区已验证规则, 取自
+//   1. gkd-kit/subscription        (GKD 官方订阅)
+//   2. AIsouler/GKD_subscription   (知名第三方订阅)
+// 每条规则均附有社区快照链接佐证, 可在 https://i.gkd.li 打开查看
+//
+// 用法一(推荐): GKD -> 订阅 -> 本地订阅 -> 应用规则,
+//   把「番茄小说-本地订阅粘贴.json5」的全部内容粘贴进去
+// 用法二: 把本文件放到任意可访问的网址, 在 GKD「添加订阅」中输入链接
+//
+// 原理: 通过安卓无障碍服务识别广告控件并自动点击关闭按钮,
+//       不修改番茄 APP 本体, 不需要 root, 仅限个人使用
+// ============================================================
+{
+  id: 20260919,
+  name: '番茄小说去广告',
+  version: 1,
+  author: '定制订阅(规则源自 gkd-kit / AIsouler 开源社区)',
+  supportUri: 'https://github.com/gkd-kit/subscription',
+  categories: [
+    { key: 0, name: '开屏广告', enable: true },
+    { key: 1, name: '局部广告', enable: true },
+    { key: 2, name: '全屏广告', enable: true },
+    { key: 3, name: '分段广告', enable: true },
+    { key: 4, name: '更新提示', enable: true },
+    { key: 5, name: '评价提示', enable: true },
+    { key: 6, name: '权限提示', enable: true },
+    { key: 7, name: '功能类', enable: false },
+  ],
+  apps: [
+    {
+      id: 'com.dragon.read',
+      name: '番茄免费小说',
+      groups: [
+        // ---------- 开屏广告: 打开 APP 时的全屏广告 ----------
+        {
+          key: 0,
+          name: '开屏广告',
+          desc: '自动点击【跳过】按钮, 只在 APP 启动后 10 秒内生效',
+          matchTime: 10000,
+          actionMaximum: 2,
+          resetMatch: 'app',
+          priorityTime: 10000,
+          rules: [
+            {
+              // 番茄特有的「跳过广告」胶囊按钮 (AIsouler 快照 i/23282793)
+              fastQuery: true,
+              actionDelay: 500,
+              matches:
+                '@[desc="跳过广告"][clickable=true] > [text*="跳过"][text.length<10][width<500 && height<300][visibleToUser=true]',
+              snapshotUrls: 'https://i.gkd.li/i/23282793',
+            },
+            {
+              // 通用兜底: 各种样式的小型【跳过】按钮
+              // 排除「视频/片头/片尾/帮助/取消/退出」等易误点文案 (沿用 AIsouler 全局规则的安全条件)
+              fastQuery: true,
+              actionDelay: 500,
+              matches:
+                '@[childCount=0][visibleToUser=true][width<500 && height<300][((text.length<10 && (text*="跳过" || text*="跳 过" || text*="跳過" || text~="(?is).*skip.*")) || (desc.length<10 && (desc*="跳过" || desc*="跳過" || desc~="(?is).*skip.*")) || id$="tt_splash_skip_btn") && text!*="视频" && text!*="片头" && text!*="片尾" && text!="帮助" && text!="取消" && !(text*="退出")]',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 局部广告: 阅读页/首页里嵌的广告卡片 ----------
+        {
+          key: 1,
+          name: '卡片式广告-阅读页横幅',
+          desc: '自动点击广告卡片右上角的【x】/【关闭此条广告】',
+          activityIds: [
+            'com.dragon.read.ad.banner.ui',
+            'com.dragon.read.reader.ReaderActivity',
+            'com.dragon.read.reader.ui.ReaderActivity',
+          ],
+          rules: [
+            {
+              // 官方订阅: 「关闭此条广告」文字按钮 (快照 import/12908734)
+              matches: '@[clickable=true] TextView[text="关闭此条广告"]',
+            },
+            {
+              // AIsouler: 广告卡片右上角无 id 的关闭图标 (快照 i/12908734 等)
+              fastQuery: true,
+              matches:
+                '@ImageView[childCount=0][clickable=true][visibleToUser=true] - LinearLayout >(2,3) [text="广告" || text="立享优惠" || text*="查看" || text^="立即" || text$="参与"][text.length<5]',
+              snapshotUrls: ['https://i.gkd.li/i/12908734', 'https://i.gkd.li/i/14540281'],
+            },
+            {
+              // AIsouler: 番茄自带的 close_button 控件 (快照 i/13520314)
+              fastQuery: true,
+              matches: '[id="com.dragon.read:id/close_button"][visibleToUser=true]',
+            },
+            {
+              // 官方订阅: 番茄新版卡片布局 (快照 import/12716444)
+              matches:
+                'FrameLayout > FrameLayout > ViewGroup[childCount=4] > @FrameLayout[clickable=true][visibleToUser=true] > ImageView',
+            },
+            {
+              // AIsouler: 信息流里隔多层的关闭图标 (快照 i/14548657)
+              matches:
+                'HorizontalAndVerticalScrollView > FrameLayout[childCount>=13] >(7,8,9) @FrameLayout[index=2][clickable=true] > ImageView',
+            },
+            {
+              // AIsouler: 「原著改编」广告的关闭图标 (快照 i/24706223)
+              fastQuery: true,
+              matches:
+                '@ImageView[clickable=true] +n ViewGroup[visibleToUser=true] > [text="原著改编"]',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 分段广告: 阅读页插在段落间的信息流广告 ----------
+        {
+          key: 2,
+          name: '分段广告-阅读页信息流',
+          desc: '先点【反馈】/【x】, 再在弹出的菜单里点【不感兴趣】',
+          activityIds: 'com.dragon.read.reader.ui.ReaderActivity',
+          rules: [
+            {
+              key: 0,
+              name: '点击【反馈】按钮',
+              actionCd: 3500,
+              actionDelay: 200,
+              fastQuery: true,
+              matches: '[text="反馈" || desc="反馈"][visibleToUser=true][name$="UIText" || name$="ViewGroup"]',
+              snapshotUrls: ['https://i.gkd.li/i/13520160', 'https://i.gkd.li/i/13816453'],
+            },
+            {
+              // 广告卡片自身的小 x (快照 i/18724040)
+              fastQuery: true,
+              matches:
+                '@ImageView[clickable=true][childCount=0][visibleToUser=true] < FrameLayout - LinearLayout >2 [text="广告"]',
+            },
+            {
+              // 底部横幅广告的 [x] (快照 i/24189866 等)
+              name: '底部横幅广告-点击[x]',
+              matches:
+                'ViewGroup[childCount>4] > @ViewGroup[childCount=1][clickable=true][focusable=true][visibleToUser=true][width<50 && height<50] +n [desc!=null]',
+              snapshotUrls: ['https://i.gkd.li/i/24189866', 'https://i.gkd.li/i/24205796'],
+            },
+            {
+              // 上一步点击后弹出的菜单里点「不感兴趣」
+              preKeys: [0, 1, 2],
+              name: '点击【不感兴趣】/【关闭此广告】',
+              fastQuery: true,
+              matches: '[text="不感兴趣" || text="关闭此广告"]',
+              snapshotUrls: ['https://i.gkd.li/i/13520219', 'https://i.gkd.li/i/24189605'],
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 全屏广告: 阅读页弹出的整屏广告 ----------
+        {
+          key: 3,
+          name: '全屏广告-阅读页',
+          desc: '点击全屏广告右上角的【关闭】',
+          activityIds: 'com.dragon.read.reader.ui.ReaderActivity',
+          rules: [
+            {
+              // 官方订阅: 广告标识右侧的关闭按钮 (快照 import/13191156)
+              fastQuery: true,
+              matches: 'TextView[text="广告"] +2 Button[id="com.dragon.read:id/close"]',
+            },
+            {
+              // AIsouler: 视频类全屏广告的【关闭】文字 (快照 i/23549149)
+              fastQuery: true,
+              matches: 'AwemeLynxVideoUI +n FlattenUIText[text="关闭"][clickable=true][visibleToUser=true]',
+            },
+            {
+              // AIsouler: 「领取限时福利」弹窗的关闭图标 (快照 i/14430326)
+              fastQuery: true,
+              matches: '@ImageView[clickable=true][visibleToUser=true] +5 [text="领取限时福利"]',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 首页右侧悬浮广告 ----------
+        {
+          key: 4,
+          name: '首页悬浮广告',
+          desc: '关闭首页右下角可拖动的悬浮【x】',
+          activityIds: [
+            'com.dragon.read.pages.main.MainFragmentActivity',
+            'com.dragon.read.ad.openingscreenad.OpeningScreenADActivity',
+          ],
+          rules: [
+            {
+              // AIsouler 版 (快照 i/12716506, i/13318796)
+              fastQuery: true,
+              matches:
+                '@ImageView[clickable=true][childCount=0][index=0][visibleToUser=true] < [childCount=3] < RelativeLayout < FrameLayout <2 [id="android:id/content"][childCount=3]',
+            },
+            {
+              // 官方订阅版 (快照 import/12716506)
+              matches:
+                '[id="android:id/content"] > FrameLayout[childCount=1] > RelativeLayout[childCount=1] >2 ImageView[id!=null][clickable=true]',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 阅读页「关注作者」弹窗 ----------
+        {
+          key: 5,
+          name: '阅读页-关注作者弹窗',
+          desc: '自动关闭读书时弹出的关注作者弹窗',
+          activityIds: 'com.dragon.read.reader.ui.ReaderActivity',
+          rules: [
+            {
+              fastQuery: true,
+              matches: '@ImageView +2 FrameLayout >3 [text="关注"]',
+              snapshotUrls: 'https://i.gkd.li/i/13399505',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 运营弹窗: 优惠券 / 抽奖 / 签到 ----------
+        {
+          key: 6,
+          name: '运营弹窗-优惠券/抽奖/签到',
+          desc: '自动关闭电商惊喜券、一分购、抽奖、签到等弹窗',
+          activityIds: 'com.dragon.read.pages.main.MainFragmentActivity',
+          rules: [
+            {
+              key: 0,
+              name: '电商惊喜券',
+              fastQuery: true,
+              matches: '@LynxFlattenUI[id=null][text=""][clickable=true] - [text="去逛商城"] -4 [text$="电商惊喜券"]',
+              snapshotUrls: 'https://i.gkd.li/i/12910159',
+            },
+            {
+              key: 1,
+              name: '爆款好物一分购',
+              fastQuery: true,
+              matches:
+                '@ImageView[clickable=true] <2 LinearLayout[childCount=2] < [id="android:id/content"][childCount=1]',
+              snapshotUrls: 'https://i.gkd.li/i/12878266',
+            },
+            {
+              key: 2,
+              name: '抽奖赢好礼',
+              fastQuery: true,
+              matches: '@LynxFlattenUI[clickable=true] - [text="前往抽奖"]',
+              snapshotUrls: 'https://i.gkd.li/i/14292475',
+            },
+            {
+              key: 3,
+              name: '签到弹窗',
+              fastQuery: true,
+              matches: '@LynxFlattenUI[clickable=true][visibleToUser=true][text=""] -27 FlattenUIText[text^="立即签到"]',
+              snapshotUrls: 'https://i.gkd.li/i/15223416',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 更新提示 ----------
+        {
+          key: 7,
+          name: '更新提示',
+          desc: '自动点击【以后再说】',
+          matchTime: 10000,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          fastQuery: true,
+          rules: [
+            {
+              activityIds: ['.update', '.pages.main.MainFragmentActivity'],
+              matches: '@[text="以后再说"] + [text="优先体验"]',
+              snapshotUrls: 'https://i.gkd.li/i/12716477',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 评价提示 ----------
+        {
+          key: 8,
+          name: '评价提示',
+          desc: '自动关闭求好评 / 求点评弹窗',
+          fastQuery: true,
+          rules: [
+            {
+              key: 0,
+              name: '求五星好评弹窗',
+              actionMaximum: 1,
+              resetMatch: 'app',
+              activityIds: '.pages.main.MainFragmentActivity',
+              matches: '@ImageView[clickable=true] +3 * > [text="五星好评"]',
+              snapshotUrls: 'https://i.gkd.li/i/14395093',
+            },
+            {
+              key: 1,
+              name: '点评此书弹窗',
+              actionMaximum: 1,
+              resetMatch: 'app',
+              activityIds: '.reader.ui.ReaderActivity',
+              matches: ['[text="点评此书"]', '[text="取消"][clickable=true]'],
+              snapshotUrls: 'https://i.gkd.li/i/21589381',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 权限提示: 通知权限 ----------
+        {
+          key: 9,
+          name: '通知权限弹窗',
+          desc: '自动点击【取消】, 拒绝开启推送',
+          matchTime: 10000,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          fastQuery: true,
+          rules: [
+            {
+              activityIds: ['.widget.ConfirmDialogBuilder', '.pages.main.MainFragmentActivity'],
+              matches: ['[text="开启推送提醒"][visibleToUser=true]', '[text="取消"][visibleToUser=true]'],
+              snapshotUrls: 'https://i.gkd.li/i/12716592',
+            },
+          ],
+          enable: true,
+        },
+
+        // ---------- 功能类: 看视频自动领奖励 (默认关闭, 需要时手动开) ----------
+        {
+          key: 10,
+          name: '看视频自动领奖励(实验)',
+          desc: '看完激励视频后自动点关闭并领取奖励(如免广告时长); 可能提前关闭视频导致奖励无效, 默认关闭',
+          rules: [
+            {
+              key: 0,
+              fastQuery: true,
+              actionDelay: 10000,
+              activityIds: 'com.ss.android.excitingvideo.ExcitingVideoActivity',
+              matches:
+                '@ImageView[width<40 && height<40] <n ViewGroup <(4,5) ViewGroup < FrameLayout < FrameLayout < FrameLayout < FrameLayout < FrameLayout < [id="android:id/content"]',
+              snapshotUrls: 'https://i.gkd.li/i/24689154',
+            },
+            {
+              key: 1,
+              preKeys: [0],
+              fastQuery: true,
+              actionDelay: 500,
+              position: { left: 'width * 0.5', bottom: 'width * 0.3182' },
+              activityIds: 'com.ss.android.excitingvideo.ExcitingVideoActivity',
+              matches:
+                'ImageView[childCount=0] < @ViewGroup[childCount=1][width>600 && height>600] <3 FrameLayout < FrameLayout < FrameLayout < FrameLayout < FrameLayout < [id="android:id/content"]',
+              snapshotUrls: 'https://i.gkd.li/i/24689140',
+            },
+            {
+              key: 99,
+              fastQuery: true,
+              activityIds: 'com.ss.android.excitingvideo.ExcitingVideoActivity',
+              matches: '@[clickable=true][width<120 && height<120] + LinearLayout > [text="当前无新视频"][visibleToUser=true]',
+              snapshotUrls: 'https://i.gkd.li/i/24689246',
+            },
+          ],
+          enable: false,
+        },
+      ],
+    },
+  ],
+}
