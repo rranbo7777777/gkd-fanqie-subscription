@@ -16,7 +16,8 @@
       rules: [
         {
           fastQuery: true,
-          actionDelay: 500,
+          // 过早点击可能导致应用闪退, 故保持与 AIsouler 原版相同的延迟
+          actionDelay: 1000,
           matches: '@[desc="跳过广告"][clickable=true] > [text*="跳过"][text.length<10][width<500 && height<300][visibleToUser=true]',
           snapshotUrls: 'https://i.gkd.li/i/23282793',
         },

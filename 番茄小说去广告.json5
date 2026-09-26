@@ -17,19 +17,9 @@
 {
   id: 20260919,
   name: '番茄小说去广告',
-  version: 1,
+  version: 2, // 修改规则后必须递增, GKD 依据此字段判断远程订阅是否有更新
   author: '定制订阅(规则源自 gkd-kit / AIsouler 开源社区)',
   supportUri: 'https://github.com/gkd-kit/subscription',
-  categories: [
-    { key: 0, name: '开屏广告', enable: true },
-    { key: 1, name: '局部广告', enable: true },
-    { key: 2, name: '全屏广告', enable: true },
-    { key: 3, name: '分段广告', enable: true },
-    { key: 4, name: '更新提示', enable: true },
-    { key: 5, name: '评价提示', enable: true },
-    { key: 6, name: '权限提示', enable: true },
-    { key: 7, name: '功能类', enable: false },
-  ],
   apps: [
     {
       id: 'com.dragon.read',
@@ -48,7 +38,8 @@
             {
               // 番茄特有的「跳过广告」胶囊按钮 (AIsouler 快照 i/23282793)
               fastQuery: true,
-              actionDelay: 500,
+              // 过早点击可能导致应用闪退, 故保持与 AIsouler 原版相同的延迟
+              actionDelay: 1000,
               matches:
                 '@[desc="跳过广告"][clickable=true] > [text*="跳过"][text.length<10][width<500 && height<300][visibleToUser=true]',
               snapshotUrls: 'https://i.gkd.li/i/23282793',
