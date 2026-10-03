@@ -17,9 +17,9 @@
 {
   id: 20260919,
   name: '番茄小说去广告',
-  version: 2, // 修改规则后必须递增, GKD 依据此字段判断远程订阅是否有更新
+  version: 3, // 修改规则后必须递增, GKD 依据此字段判断远程订阅是否有更新
   author: '定制订阅(规则源自 gkd-kit / AIsouler 开源社区)',
-  supportUri: 'https://github.com/gkd-kit/subscription',
+  supportUri: 'https://github.com/rranbo7777777/gkd-fanqie-subscription',
   apps: [
     {
       id: 'com.dragon.read',
