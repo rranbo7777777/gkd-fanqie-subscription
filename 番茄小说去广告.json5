@@ -5,7 +5,8 @@
 // 规则来源: 开源社区已验证规则, 取自
 //   1. gkd-kit/subscription        (GKD 官方订阅)
 //   2. AIsouler/GKD_subscription   (知名第三方订阅)
-// 每条规则均附有社区快照链接佐证, 可在 https://i.gkd.li 打开查看
+// 绝大多数规则附有社区快照链接佐证, 可在 https://i.gkd.li 打开对照;
+// 唯一例外是开屏兜底规则(见组内注释, 改编自 AIsouler 全局规则, 无单独快照)
 //
 // 用法一(推荐): GKD -> 订阅 -> 本地订阅 -> 应用规则,
 //   把「番茄小说-本地订阅粘贴.json5」的全部内容粘贴进去
@@ -17,7 +18,7 @@
 {
   id: 20260919,
   name: '番茄小说去广告',
-  version: 3, // 修改规则后必须递增, GKD 依据此字段判断远程订阅是否有更新
+  version: 4, // 修改规则后必须递增, GKD 依据此字段判断远程订阅是否有更新
   author: '定制订阅(规则源自 gkd-kit / AIsouler 开源社区)',
   supportUri: 'https://github.com/rranbo7777777/gkd-fanqie-subscription',
   apps: [
@@ -70,6 +71,7 @@
             {
               // 官方订阅: 「关闭此条广告」文字按钮 (快照 import/12908734)
               matches: '@[clickable=true] TextView[text="关闭此条广告"]',
+              snapshotUrls: 'https://i.gkd.li/i/14540281',
             },
             {
               // AIsouler: 广告卡片右上角无 id 的关闭图标 (快照 i/12908734 等)
@@ -82,22 +84,26 @@
               // AIsouler: 番茄自带的 close_button 控件 (快照 i/13520314)
               fastQuery: true,
               matches: '[id="com.dragon.read:id/close_button"][visibleToUser=true]',
+              snapshotUrls: 'https://i.gkd.li/i/13520314',
             },
             {
               // 官方订阅: 番茄新版卡片布局 (快照 import/12716444)
               matches:
                 'FrameLayout > FrameLayout > ViewGroup[childCount=4] > @FrameLayout[clickable=true][visibleToUser=true] > ImageView',
+              snapshotUrls: 'https://i.gkd.li/import/12716444',
             },
             {
               // AIsouler: 信息流里隔多层的关闭图标 (快照 i/14548657)
               matches:
                 'HorizontalAndVerticalScrollView > FrameLayout[childCount>=13] >(7,8,9) @FrameLayout[index=2][clickable=true] > ImageView',
+              snapshotUrls: 'https://i.gkd.li/i/14548657',
             },
             {
               // AIsouler: 「原著改编」广告的关闭图标 (快照 i/24706223)
               fastQuery: true,
               matches:
                 '@ImageView[clickable=true] +n ViewGroup[visibleToUser=true] > [text="原著改编"]',
+              snapshotUrls: 'https://i.gkd.li/i/24706223',
             },
           ],
           enable: true,
@@ -121,12 +127,16 @@
             },
             {
               // 广告卡片自身的小 x (快照 i/18724040)
+              // key 必须显式声明: GKD 的 preKeys 只能引用显式 key 的规则 (ResolvedRule.kt)
+              key: 1,
               fastQuery: true,
               matches:
                 '@ImageView[clickable=true][childCount=0][visibleToUser=true] < FrameLayout - LinearLayout >2 [text="广告"]',
+              snapshotUrls: 'https://i.gkd.li/i/18724040',
             },
             {
               // 底部横幅广告的 [x] (快照 i/24189866 等)
+              key: 2,
               name: '底部横幅广告-点击[x]',
               matches:
                 'ViewGroup[childCount>4] > @ViewGroup[childCount=1][clickable=true][focusable=true][visibleToUser=true][width<50 && height<50] +n [desc!=null]',
@@ -155,16 +165,19 @@
               // 官方订阅: 广告标识右侧的关闭按钮 (快照 import/13191156)
               fastQuery: true,
               matches: 'TextView[text="广告"] +2 Button[id="com.dragon.read:id/close"]',
+              snapshotUrls: 'https://i.gkd.li/import/13191156',
             },
             {
               // AIsouler: 视频类全屏广告的【关闭】文字 (快照 i/23549149)
               fastQuery: true,
               matches: 'AwemeLynxVideoUI +n FlattenUIText[text="关闭"][clickable=true][visibleToUser=true]',
+              snapshotUrls: 'https://i.gkd.li/i/23549149',
             },
             {
               // AIsouler: 「领取限时福利」弹窗的关闭图标 (快照 i/14430326)
               fastQuery: true,
               matches: '@ImageView[clickable=true][visibleToUser=true] +5 [text="领取限时福利"]',
+              snapshotUrls: 'https://i.gkd.li/i/14430326',
             },
           ],
           enable: true,
@@ -185,11 +198,13 @@
               fastQuery: true,
               matches:
                 '@ImageView[clickable=true][childCount=0][index=0][visibleToUser=true] < [childCount=3] < RelativeLayout < FrameLayout <2 [id="android:id/content"][childCount=3]',
+              snapshotUrls: ['https://i.gkd.li/i/12716506', 'https://i.gkd.li/i/13318796'],
             },
             {
               // 官方订阅版 (快照 import/12716506)
               matches:
                 '[id="android:id/content"] > FrameLayout[childCount=1] > RelativeLayout[childCount=1] >2 ImageView[id!=null][clickable=true]',
+              snapshotUrls: 'https://i.gkd.li/import/12716506',
             },
           ],
           enable: true,
@@ -312,7 +327,7 @@
             {
               activityIds: ['.widget.ConfirmDialogBuilder', '.pages.main.MainFragmentActivity'],
               matches: ['[text="开启推送提醒"][visibleToUser=true]', '[text="取消"][visibleToUser=true]'],
-              snapshotUrls: 'https://i.gkd.li/i/12716592',
+              snapshotUrls: ['https://i.gkd.li/i/12716592', 'https://i.gkd.li/i/21589667'],
             },
           ],
           enable: true,

@@ -41,6 +41,7 @@
       rules: [
         {
           matches: '@[clickable=true] TextView[text="关闭此条广告"]',
+          snapshotUrls: 'https://i.gkd.li/i/14540281',
         },
         {
           fastQuery: true,
@@ -53,16 +54,20 @@
         {
           fastQuery: true,
           matches: '[id="com.dragon.read:id/close_button"][visibleToUser=true]',
+          snapshotUrls: 'https://i.gkd.li/i/13520314',
         },
         {
           matches: 'FrameLayout > FrameLayout > ViewGroup[childCount=4] > @FrameLayout[clickable=true][visibleToUser=true] > ImageView',
+          snapshotUrls: 'https://i.gkd.li/import/12716444',
         },
         {
           matches: 'HorizontalAndVerticalScrollView > FrameLayout[childCount>=13] >(7,8,9) @FrameLayout[index=2][clickable=true] > ImageView',
+          snapshotUrls: 'https://i.gkd.li/i/14548657',
         },
         {
           fastQuery: true,
           matches: '@ImageView[clickable=true] +n ViewGroup[visibleToUser=true] > [text="原著改编"]',
+          snapshotUrls: 'https://i.gkd.li/i/24706223',
         },
       ],
       enable: true,
@@ -86,10 +91,16 @@
           ],
         },
         {
+          // 广告卡片自身的小 x
+          // key 必须显式声明: GKD 的 preKeys 只能引用显式 key 的规则
+          key: 1,
           fastQuery: true,
           matches: '@ImageView[clickable=true][childCount=0][visibleToUser=true] < FrameLayout - LinearLayout >2 [text="广告"]',
+          snapshotUrls: 'https://i.gkd.li/i/18724040',
         },
         {
+          // 底部横幅广告的 [x]
+          key: 2,
           name: '底部横幅广告-点击[x]',
           matches: 'ViewGroup[childCount>4] > @ViewGroup[childCount=1][clickable=true][focusable=true][visibleToUser=true][width<50 && height<50] +n [desc!=null]',
           snapshotUrls: [
@@ -123,14 +134,17 @@
         {
           fastQuery: true,
           matches: 'TextView[text="广告"] +2 Button[id="com.dragon.read:id/close"]',
+          snapshotUrls: 'https://i.gkd.li/import/13191156',
         },
         {
           fastQuery: true,
           matches: 'AwemeLynxVideoUI +n FlattenUIText[text="关闭"][clickable=true][visibleToUser=true]',
+          snapshotUrls: 'https://i.gkd.li/i/23549149',
         },
         {
           fastQuery: true,
           matches: '@ImageView[clickable=true][visibleToUser=true] +5 [text="领取限时福利"]',
+          snapshotUrls: 'https://i.gkd.li/i/14430326',
         },
       ],
       enable: true,
@@ -147,9 +161,14 @@
         {
           fastQuery: true,
           matches: '@ImageView[clickable=true][childCount=0][index=0][visibleToUser=true] < [childCount=3] < RelativeLayout < FrameLayout <2 [id="android:id/content"][childCount=3]',
+          snapshotUrls: [
+            'https://i.gkd.li/i/12716506',
+            'https://i.gkd.li/i/13318796',
+          ],
         },
         {
           matches: '[id="android:id/content"] > FrameLayout[childCount=1] > RelativeLayout[childCount=1] >2 ImageView[id!=null][clickable=true]',
+          snapshotUrls: 'https://i.gkd.li/import/12716506',
         },
       ],
       enable: true,
@@ -273,7 +292,10 @@
             '[text="开启推送提醒"][visibleToUser=true]',
             '[text="取消"][visibleToUser=true]',
           ],
-          snapshotUrls: 'https://i.gkd.li/i/12716592',
+          snapshotUrls: [
+            'https://i.gkd.li/i/12716592',
+            'https://i.gkd.li/i/21589667',
+          ],
         },
       ],
       enable: true,
