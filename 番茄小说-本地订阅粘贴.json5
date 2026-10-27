@@ -128,7 +128,7 @@
     {
       key: 3,
       name: '全屏广告-阅读页',
-      desc: '点击全屏广告右上角的【关闭】',
+      desc: '点击全屏广告右上角的【关闭】/ 全屏视频广告的【x】',
       activityIds: 'com.dragon.read.reader.ui.ReaderActivity',
       rules: [
         {
@@ -145,6 +145,16 @@
           fastQuery: true,
           matches: '@ImageView[clickable=true][visibleToUser=true] +5 [text="领取限时福利"]',
           snapshotUrls: 'https://i.gkd.li/i/14430326',
+        },
+        {
+          // 全屏视频广告(awemevideo)右上角的关闭按钮, 基于相对坐标点击 (快照 i/23621776)
+          fastQuery: true,
+          position: {
+            left: 'width * 0.9123',
+            top: 'width * 0.067',
+          },
+          matches: 'View[id=null][text=null][desc=null][childCount=0] < [id="com.dragon.read.awemevideo:id/fullvideo_videoview"][childCount=1][visibleToUser=true]',
+          snapshotUrls: 'https://i.gkd.li/i/23621776',
         },
       ],
       enable: true,
