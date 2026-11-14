@@ -29,7 +29,9 @@ check.cjs 覆盖：JSON5 语法、订阅级字段、组 key 唯一、preKeys 引
 ## 写文档前核查上游状态
 
 - GitHub API `repos/gkd-kit/subscription` 与 `repos/AIsouler/GKD_subscription` 的 `archived` / `pushed_at`（2026-11-03 实测：gkd-kit 最后推送 2024-05-12，AIsouler 最后推送 2026-02-13，二者均已归档）。
-- GKD 版本下限以 <https://github.com/gkd-kit/gkd/releases/latest> 为准（2026-11-03 实测最新 v1.12.1）。
+- 判断上游有无新规则不能只看 `pushed_at`：归档仓库的元数据操作也会刷新它（2026-11-14 实测 AIsouler `pushed_at=2026-11-10`，但 commits 接口最新提交仍是 2026-02-13）。以 commits 接口的最新提交时间为准。
+- GKD 版本下限以 <https://github.com/gkd-kit/gkd/releases/latest> 为准（2026-11-14 实测最新 v1.13.2；v1.13.0 重写选择器引擎并调整 `matchAnyApp`/`matchSystemApp`/`matchLauncher`/`apps[].enable` 生效层级，本订阅未用到这些字段，规则不受影响）。
+- 快照有效性核查：`https://i.gkd.li/i/<id>` 页面 URL 现返回 HTTP 404 状态码但内容为 inspect SPA HTML，属 Netlify fallback 正常行为，不代表快照失效；快照数据实际存于 GitHub user-attachments，以 `https://github.com/user-attachments/files/<id>/file.zip` 的 HTTP 200 判断快照是否还在（2026-11-14 实测本订阅 33/33 可达）。
 
 ## 提交约定
 
