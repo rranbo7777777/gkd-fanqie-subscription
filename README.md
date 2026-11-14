@@ -16,7 +16,7 @@
 
 ## 二、安装步骤（约 5 分钟）
 
-1. **安装 GKD**：手机浏览器打开 <https://gkd.li> 下载正式版（v1.12.1+），或去 [GitHub Releases](https://github.com/gkd-kit/gkd/releases) 下载。
+1. **安装 GKD**：手机浏览器打开 <https://gkd.li> 下载最新正式版，或去 [GitHub Releases](https://github.com/gkd-kit/gkd/releases) 下载。
 2. **开启无障碍**：打开 GKD，按提示在系统设置里授权无障碍服务；再到系统设置里给 GKD 关闭电池优化/允许后台运行（否则会被杀后台导致不生效）。
 3. **导入本订阅（二选一）**：
    - **方式 A（推荐）**：GKD → 底部「订阅」→「本地订阅」→「应用规则」→ 把本目录 **`番茄小说-本地订阅粘贴.json5`** 的全部内容复制粘贴进去 → 保存。
